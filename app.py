@@ -1,31 +1,38 @@
 from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///feedback.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Route to display form
-@app.route('/')
-def feedback_form():
-    return render_template('student_form.html')
+# Database Model
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(120))
+    feedback = db.Column(db.Text)
 
-# Route to handle form submission
-@app.route('/submit', methods=['POST'])
-def submit_feedback():
-    # Get data from form
-    name = request.form.get('name')
-    email = request.form.get('email')
-    feedback = request.form.get('feedback')
+# Route to handle form and display
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        feedback_text = request.form['feedback']
 
-    # Check if any field is empty
-    if not name or not email or not feedback:
-        return "Please fill in all fields!", 400
+        if not email.endswith('@gmail.com'):
+            return "Only Gmail addresses are allowed!", 400
 
-    # Save feedback to a text file
-    with open('feedback.txt', 'a') as file:
-        file.write(f"Name: {name}\nEmail: {email}\nFeedback: {feedback}\n---\n")
+        new_feedback = Feedback(name=name, email=email, feedback=feedback_text)
+        db.session.add(new_feedback)
+        db.session.commit()
 
-    # Render thank you page
-    return render_template('thank_you.html', name=name)
+    all_feedback = Feedback.query.all()
+    return render_template('form.html', feedbacks=all_feedback)
 
-# Run the Flask app
+# Initialize the database
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

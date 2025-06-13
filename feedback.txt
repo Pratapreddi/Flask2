@@ -1,8 +1,0 @@
-Name: pratap
-Email: pratap@gmail.com
-Feedback: Ist a greate learning
----
-Name: omkar
-Email: upkar@gmail.com
-Feedback: tunni gaktile kalsie
----

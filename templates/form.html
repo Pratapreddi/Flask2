@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        form { margin-bottom: 30px; }
+        input, textarea, button { padding: 10px; margin: 5px; width: 300px; }
+        textarea { resize: vertical; }
+        table { width: 80%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <center>
+    <h2>Enter the data</h2>
+    <form method="POST">
+        <input type="text" name="name" placeholder="Your Name" required><br>
+        <input type="email" name="email" placeholder="Your Gmail" required><br>
+        <h2>Feedback</h2>
+        <textarea name="feedback" placeholder="Your Feedback" required></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if feedbacks %}
+        <h3>Submitted Feedback:</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Gmail</th>
+                <th>Feedback</th>
+            </tr>
+            {% for fb in feedbacks %}
+            <tr>
+                <td>{{ fb.name }}</td>
+                <td>{{ fb.email }}</td>
+                <td>{{ fb.feedback }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    </center>
+</body>
+</html>
